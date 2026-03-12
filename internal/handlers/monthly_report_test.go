@@ -7,8 +7,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"backend-commons/constants"
-	"backend-commons/dtos"
+	"financialcontrol/internal/constants"
+
+	"github.com/TB-Systems/financial-control-backend-commons/dtos"
 	apierrors "github.com/TB-Systems/go-commons/errors"
 
 	"github.com/gin-gonic/gin"

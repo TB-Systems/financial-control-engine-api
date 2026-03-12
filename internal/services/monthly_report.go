@@ -2,13 +2,15 @@ package services
 
 import (
 	"context"
-	"backend-commons/constants"
-	"backend-commons/dtos"
-	"backend-commons/models"
-	"backend-commons/modelsdto"
 	"financialcontrol/internal/repositories"
 	"net/http"
 	"sync"
+
+	"financialcontrol/internal/constants"
+
+	"github.com/TB-Systems/financial-control-backend-commons/dtos"
+	"github.com/TB-Systems/financial-control-backend-commons/models"
+	"github.com/TB-Systems/financial-control-backend-commons/modelsdto"
 
 	"github.com/TB-Systems/go-commons/errors"
 	"github.com/google/uuid"

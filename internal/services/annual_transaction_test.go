@@ -3,13 +3,13 @@ package services
 import (
 	"context"
 	"errors"
+	"financialcontrol/internal/constants"
 	"testing"
 	"time"
 
+	"github.com/TB-Systems/financial-control-backend-commons/dtos"
+	"github.com/TB-Systems/financial-control-backend-commons/models"
 	"github.com/TB-Systems/go-commons/commonsmodels"
-	"backend-commons/constants"
-	"backend-commons/dtos"
-	"backend-commons/models"
 
 	"github.com/google/uuid"
 )

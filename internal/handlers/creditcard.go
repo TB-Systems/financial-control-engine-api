@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"backend-commons/dtos"
+	"github.com/TB-Systems/financial-control-backend-commons/dtos"
 
 	"financialcontrol/internal/services"
 	"net/http"

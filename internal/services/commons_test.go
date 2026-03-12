@@ -3,9 +3,11 @@ package services
 import (
 	"context"
 	stdErrors "errors"
-	"backend-commons/constants"
-	"backend-commons/models"
 	"testing"
+
+	"financialcontrol/internal/constants"
+
+	"github.com/TB-Systems/financial-control-backend-commons/models"
 
 	"github.com/google/uuid"
 )

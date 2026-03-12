@@ -6,8 +6,9 @@ import (
 	"net/http"
 	"testing"
 
-	"backend-commons/constants"
-	"backend-commons/models"
+	"financialcontrol/internal/constants"
+
+	"github.com/TB-Systems/financial-control-backend-commons/models"
 
 	"github.com/google/uuid"
 )

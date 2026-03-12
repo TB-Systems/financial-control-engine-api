@@ -5,7 +5,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"backend-commons/constants"
+	"financialcontrol/internal/constants"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"

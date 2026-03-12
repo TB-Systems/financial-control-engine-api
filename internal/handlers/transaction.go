@@ -1,9 +1,10 @@
 package handlers
 
 import (
-	"backend-commons/dtos"
 	"financialcontrol/internal/services"
 	"net/http"
+
+	"github.com/TB-Systems/financial-control-backend-commons/dtos"
 
 	"github.com/TB-Systems/go-commons/commonsmodels"
 	"github.com/TB-Systems/go-commons/errors"

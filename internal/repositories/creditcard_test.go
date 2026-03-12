@@ -6,8 +6,9 @@ import (
 	"testing"
 	"time"
 
-	"backend-commons/models"
 	"financialcontrol/internal/store/pgstore"
+
+	"github.com/TB-Systems/financial-control-backend-commons/models"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"

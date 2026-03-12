@@ -1,8 +1,9 @@
 package middlewares
 
 import (
-	"backend-commons/constants"
 	"net/http"
+
+	"financialcontrol/internal/constants"
 
 	"github.com/TB-Systems/go-commons/errors"
 	"github.com/TB-Systems/go-commons/utils"

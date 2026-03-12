@@ -1,9 +1,10 @@
 package repositories
 
 import (
-	"backend-commons/models"
 	"context"
 	"financialcontrol/internal/store/pgstore"
+
+	"github.com/TB-Systems/financial-control-backend-commons/models"
 
 	"github.com/TB-Systems/go-commons/utils"
 	"github.com/google/uuid"

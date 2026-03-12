@@ -3,9 +3,10 @@ package main
 import (
 	"context"
 	"financialcontrol/internal/api"
-	"backend-commons/constants"
 	"fmt"
 	"os"
+
+	"financialcontrol/internal/constants"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgxpool"

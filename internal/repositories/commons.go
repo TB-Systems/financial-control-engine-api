@@ -1,8 +1,9 @@
 package repositories
 
 import (
-	"backend-commons/models"
 	"context"
+
+	"github.com/TB-Systems/financial-control-backend-commons/models"
 
 	"github.com/google/uuid"
 )

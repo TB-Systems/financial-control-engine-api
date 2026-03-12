@@ -5,8 +5,9 @@ import (
 	"errors"
 	"testing"
 
-	"backend-commons/models"
 	"financialcontrol/internal/store/pgstore"
+
+	"github.com/TB-Systems/financial-control-backend-commons/models"
 	"github.com/TB-Systems/go-commons/utils"
 
 	"github.com/google/uuid"
