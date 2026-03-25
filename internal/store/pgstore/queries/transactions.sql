@@ -15,6 +15,81 @@ INSERT INTO transactions (
 )
 RETURNING id, name, date, value, paid, created_at, updated_at;
 
+-- name: GetTransactionByMonthlyTransactionID :one
+SELECT t.id
+FROM transactions t
+LEFT JOIN categories c ON t.category_id = c.id
+LEFT JOIN credit_cards cc ON t.credit_card_id = cc.id
+WHERE t.monthly_transactions_id = sqlc.arg(monthly_transactions_id)
+  AND (
+      (
+          c.transaction_type IN (0, 1)
+          AND EXTRACT(YEAR FROM t.date) = sqlc.arg(year)::int
+          AND EXTRACT(MONTH FROM t.date) = sqlc.arg(month)::int
+      )
+      OR
+      (
+          c.transaction_type = 2
+          AND t.credit_card_id IS NOT NULL
+          AND t.date > (
+              make_date(sqlc.arg(year)::int, sqlc.arg(month)::int, 1) - INTERVAL '2 months' + (cc.close_day || ' days')::INTERVAL
+          )
+          AND t.date <= (
+              make_date(sqlc.arg(year)::int, sqlc.arg(month)::int, 1) - INTERVAL '1 month' + (cc.close_day || ' days')::INTERVAL
+          )
+      )
+  );
+
+-- name: GetTransactionByAnnualTransactionID :one
+SELECT t.id
+FROM transactions t
+LEFT JOIN categories c ON t.category_id = c.id
+LEFT JOIN credit_cards cc ON t.credit_card_id = cc.id
+WHERE t.annual_transactions_id = sqlc.arg(annual_transactions_id)
+  AND (
+      (
+          c.transaction_type IN (0, 1)
+          AND EXTRACT(YEAR FROM t.date) = sqlc.arg(year)::int
+          AND EXTRACT(MONTH FROM t.date) = sqlc.arg(month)::int
+      )
+      OR
+      (
+          c.transaction_type = 2
+          AND t.credit_card_id IS NOT NULL
+          AND t.date > (
+              make_date(sqlc.arg(year)::int, sqlc.arg(month)::int, 1) - INTERVAL '2 months' + (cc.close_day || ' days')::INTERVAL
+          )
+          AND t.date <= (
+              make_date(sqlc.arg(year)::int, sqlc.arg(month)::int, 1) - INTERVAL '1 month' + (cc.close_day || ' days')::INTERVAL
+          )
+      )
+  );
+
+-- name: GetTransactionByInstallmentTransactionID :one
+SELECT t.id
+FROM transactions t
+LEFT JOIN categories c ON t.category_id = c.id
+LEFT JOIN credit_cards cc ON t.credit_card_id = cc.id
+WHERE t.installment_transactions_id = sqlc.arg(installment_transactions_id)
+  AND (
+      (
+          c.transaction_type IN (0, 1)
+          AND EXTRACT(YEAR FROM t.date) = sqlc.arg(year)::int
+          AND EXTRACT(MONTH FROM t.date) = sqlc.arg(month)::int
+      )
+      OR
+      (
+          c.transaction_type = 2
+          AND t.credit_card_id IS NOT NULL
+          AND t.date > (
+              make_date(sqlc.arg(year)::int, sqlc.arg(month)::int, 1) - INTERVAL '2 months' + (cc.close_day || ' days')::INTERVAL
+          )
+          AND t.date <= (
+              make_date(sqlc.arg(year)::int, sqlc.arg(month)::int, 1) - INTERVAL '1 month' + (cc.close_day || ' days')::INTERVAL
+          )
+      )
+  );
+
 -- name: GetTransactionByID :one
 SELECT 
     t.id,

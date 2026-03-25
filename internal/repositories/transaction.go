@@ -13,11 +13,14 @@ import (
 )
 
 type Transaction interface {
+	CreateTransaction(context context.Context, transaction models.CreateTransaction) (models.ShortTransaction, error)
 	ReadCategoryByID(context context.Context, categoryID uuid.UUID) (models.Category, error)
 	ReadCreditCardByID(context context.Context, creditCardId uuid.UUID) (models.CreditCard, error)
-	CreateTransaction(context context.Context, transaction models.CreateTransaction) (models.ShortTransaction, error)
 	ReadTransactions(context context.Context, params commonsmodels.PaginatedParams) ([]models.Transaction, int64, error)
 	ReadTransactionsInToDates(context context.Context, params commonsmodels.PaginatedParamsWithDateRange) ([]models.Transaction, int64, error)
+	ReadTransactionByMonthlyTransactionID(ctx context.Context, param models.GetRecurrentTransactionByIDAndDateParam) (uuid.UUID, error)
+	ReadTransactionByAnnualTransactionID(ctx context.Context, param models.GetRecurrentTransactionByIDAndDateParam) (uuid.UUID, error)
+	ReadTransactionByInstallmentTransactionID(ctx context.Context, param models.GetRecurrentTransactionByIDAndDateParam) (uuid.UUID, error)
 	ReadShortAnnualTransactionByID(ctx context.Context, id uuid.UUID) (models.ShortAnnualTransaction, error)
 	ReadShortMonthlyTransactionByID(ctx context.Context, id uuid.UUID) (models.ShortMonthlyTransaction, error)
 	ReadShortInstallmentTransactionByID(ctx context.Context, id uuid.UUID) (models.ShortInstallmentTransaction, error)
@@ -154,6 +157,54 @@ func (r Repository) ReadTransactionById(context context.Context, id uuid.UUID) (
 	}
 
 	return storeTransactionToTransaction(transaction), nil
+}
+
+func (r Repository) ReadTransactionByMonthlyTransactionID(ctx context.Context, param models.GetRecurrentTransactionByIDAndDateParam) (uuid.UUID, error) {
+	pgstoreParam := pgstore.GetTransactionByMonthlyTransactionIDParams{
+		MonthlyTransactionsID: utils.UUIDToPgTypeUUID(&param.ID),
+		Year:                  param.Year,
+		Month:                 param.Month,
+	}
+
+	transactionID, err := r.store.GetTransactionByMonthlyTransactionID(ctx, pgstoreParam)
+
+	if err != nil {
+		return uuid.UUID{}, err
+	}
+
+	return transactionID, nil
+}
+
+func (r Repository) ReadTransactionByAnnualTransactionID(ctx context.Context, param models.GetRecurrentTransactionByIDAndDateParam) (uuid.UUID, error) {
+	pgstoreParam := pgstore.GetTransactionByAnnualTransactionIDParams{
+		AnnualTransactionsID: utils.UUIDToPgTypeUUID(&param.ID),
+		Year:                 param.Year,
+		Month:                param.Month,
+	}
+
+	transactionID, err := r.store.GetTransactionByAnnualTransactionID(ctx, pgstoreParam)
+
+	if err != nil {
+		return uuid.UUID{}, err
+	}
+
+	return transactionID, nil
+}
+
+func (r Repository) ReadTransactionByInstallmentTransactionID(ctx context.Context, param models.GetRecurrentTransactionByIDAndDateParam) (uuid.UUID, error) {
+	pgstoreParam := pgstore.GetTransactionByInstallmentTransactionIDParams{
+		InstallmentTransactionsID: utils.UUIDToPgTypeUUID(&param.ID),
+		Year:                      param.Year,
+		Month:                     param.Month,
+	}
+
+	transactionID, err := r.store.GetTransactionByInstallmentTransactionID(ctx, pgstoreParam)
+
+	if err != nil {
+		return uuid.UUID{}, err
+	}
+
+	return transactionID, nil
 }
 
 func (r Repository) UpdateTransaction(context context.Context, transaction models.Transaction) (models.ShortTransaction, error) {

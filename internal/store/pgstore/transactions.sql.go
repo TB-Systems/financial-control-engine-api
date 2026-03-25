@@ -89,6 +89,45 @@ func (q *Queries) DeleteTransaction(ctx context.Context, id uuid.UUID) error {
 	return err
 }
 
+const getTransactionByAnnualTransactionID = `-- name: GetTransactionByAnnualTransactionID :one
+SELECT t.id
+FROM transactions t
+LEFT JOIN categories c ON t.category_id = c.id
+LEFT JOIN credit_cards cc ON t.credit_card_id = cc.id
+WHERE t.annual_transactions_id = $1
+  AND (
+      (
+          c.transaction_type IN (0, 1)
+          AND EXTRACT(YEAR FROM t.date) = $2::int
+          AND EXTRACT(MONTH FROM t.date) = $3::int
+      )
+      OR
+      (
+          c.transaction_type = 2
+          AND t.credit_card_id IS NOT NULL
+          AND t.date > (
+              make_date($2::int, $3::int, 1) - INTERVAL '2 months' + (cc.close_day || ' days')::INTERVAL
+          )
+          AND t.date <= (
+              make_date($2::int, $3::int, 1) - INTERVAL '1 month' + (cc.close_day || ' days')::INTERVAL
+          )
+      )
+  )
+`
+
+type GetTransactionByAnnualTransactionIDParams struct {
+	AnnualTransactionsID pgtype.UUID `json:"annual_transactions_id"`
+	Year                 int32       `json:"year"`
+	Month                int32       `json:"month"`
+}
+
+func (q *Queries) GetTransactionByAnnualTransactionID(ctx context.Context, arg GetTransactionByAnnualTransactionIDParams) (uuid.UUID, error) {
+	row := q.db.QueryRow(ctx, getTransactionByAnnualTransactionID, arg.AnnualTransactionsID, arg.Year, arg.Month)
+	var id uuid.UUID
+	err := row.Scan(&id)
+	return id, err
+}
+
 const getTransactionByID = `-- name: GetTransactionByID :one
 SELECT 
     t.id,
@@ -246,6 +285,84 @@ func (q *Queries) GetTransactionByID(ctx context.Context, id uuid.UUID) (GetTran
 		&i.InstallmentTransactionsUpdatedAt,
 	)
 	return i, err
+}
+
+const getTransactionByInstallmentTransactionID = `-- name: GetTransactionByInstallmentTransactionID :one
+SELECT t.id
+FROM transactions t
+LEFT JOIN categories c ON t.category_id = c.id
+LEFT JOIN credit_cards cc ON t.credit_card_id = cc.id
+WHERE t.installment_transactions_id = $1
+  AND (
+      (
+          c.transaction_type IN (0, 1)
+          AND EXTRACT(YEAR FROM t.date) = $2::int
+          AND EXTRACT(MONTH FROM t.date) = $3::int
+      )
+      OR
+      (
+          c.transaction_type = 2
+          AND t.credit_card_id IS NOT NULL
+          AND t.date > (
+              make_date($2::int, $3::int, 1) - INTERVAL '2 months' + (cc.close_day || ' days')::INTERVAL
+          )
+          AND t.date <= (
+              make_date($2::int, $3::int, 1) - INTERVAL '1 month' + (cc.close_day || ' days')::INTERVAL
+          )
+      )
+  )
+`
+
+type GetTransactionByInstallmentTransactionIDParams struct {
+	InstallmentTransactionsID pgtype.UUID `json:"installment_transactions_id"`
+	Year                      int32       `json:"year"`
+	Month                     int32       `json:"month"`
+}
+
+func (q *Queries) GetTransactionByInstallmentTransactionID(ctx context.Context, arg GetTransactionByInstallmentTransactionIDParams) (uuid.UUID, error) {
+	row := q.db.QueryRow(ctx, getTransactionByInstallmentTransactionID, arg.InstallmentTransactionsID, arg.Year, arg.Month)
+	var id uuid.UUID
+	err := row.Scan(&id)
+	return id, err
+}
+
+const getTransactionByMonthlyTransactionID = `-- name: GetTransactionByMonthlyTransactionID :one
+SELECT t.id
+FROM transactions t
+LEFT JOIN categories c ON t.category_id = c.id
+LEFT JOIN credit_cards cc ON t.credit_card_id = cc.id
+WHERE t.monthly_transactions_id = $1
+  AND (
+      (
+          c.transaction_type IN (0, 1)
+          AND EXTRACT(YEAR FROM t.date) = $2::int
+          AND EXTRACT(MONTH FROM t.date) = $3::int
+      )
+      OR
+      (
+          c.transaction_type = 2
+          AND t.credit_card_id IS NOT NULL
+          AND t.date > (
+              make_date($2::int, $3::int, 1) - INTERVAL '2 months' + (cc.close_day || ' days')::INTERVAL
+          )
+          AND t.date <= (
+              make_date($2::int, $3::int, 1) - INTERVAL '1 month' + (cc.close_day || ' days')::INTERVAL
+          )
+      )
+  )
+`
+
+type GetTransactionByMonthlyTransactionIDParams struct {
+	MonthlyTransactionsID pgtype.UUID `json:"monthly_transactions_id"`
+	Year                  int32       `json:"year"`
+	Month                 int32       `json:"month"`
+}
+
+func (q *Queries) GetTransactionByMonthlyTransactionID(ctx context.Context, arg GetTransactionByMonthlyTransactionIDParams) (uuid.UUID, error) {
+	row := q.db.QueryRow(ctx, getTransactionByMonthlyTransactionID, arg.MonthlyTransactionsID, arg.Year, arg.Month)
+	var id uuid.UUID
+	err := row.Scan(&id)
+	return id, err
 }
 
 const hasTransactionsByCategory = `-- name: HasTransactionsByCategory :one

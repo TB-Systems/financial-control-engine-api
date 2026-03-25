@@ -25,11 +25,13 @@ type TransactionsRepositoryMock struct {
 	ShortAnnualError       error
 	ShortMonthlyError      error
 	ShortInstallmentError  error
+	ReadRecurrentError     error
 	DeleteError            error
 	PayError               error
 	UpdateError            error
 	TransactionResult      models.ShortTransaction
 	TransactionFullResult  models.Transaction
+	RecurrentTransactionID uuid.UUID
 	ShortAnnualResult      models.ShortAnnualTransaction
 	ShortMonthlyResult     models.ShortMonthlyTransaction
 	ShortInstallmentResult models.ShortInstallmentTransaction
@@ -49,9 +51,11 @@ func NewTransactionsRepositoryMock() *TransactionsRepositoryMock {
 		ShortAnnualError:       nil,
 		ShortMonthlyError:      nil,
 		ShortInstallmentError:  nil,
+		ReadRecurrentError:     nil,
 		UpdateError:            nil,
 		TransactionResult:      models.ShortTransaction{},
 		TransactionFullResult:  models.Transaction{},
+		RecurrentTransactionID: uuid.UUID{},
 		ShortAnnualResult:      models.ShortAnnualTransaction{},
 		ShortMonthlyResult:     models.ShortMonthlyTransaction{},
 		ShortInstallmentResult: models.ShortInstallmentTransaction{},
@@ -138,6 +142,27 @@ func (t *TransactionsRepositoryMock) ReadShortInstallmentTransactionByID(ctx con
 		return models.ShortInstallmentTransaction{}, t.Error
 	}
 	return t.ShortInstallmentResult, nil
+}
+
+func (t *TransactionsRepositoryMock) ReadTransactionByMonthlyTransactionID(ctx context.Context, param models.GetRecurrentTransactionByIDAndDateParam) (uuid.UUID, error) {
+	if t.ReadRecurrentError != nil {
+		return uuid.UUID{}, t.ReadRecurrentError
+	}
+	return t.RecurrentTransactionID, nil
+}
+
+func (t *TransactionsRepositoryMock) ReadTransactionByAnnualTransactionID(ctx context.Context, param models.GetRecurrentTransactionByIDAndDateParam) (uuid.UUID, error) {
+	if t.ReadRecurrentError != nil {
+		return uuid.UUID{}, t.ReadRecurrentError
+	}
+	return t.RecurrentTransactionID, nil
+}
+
+func (t *TransactionsRepositoryMock) ReadTransactionByInstallmentTransactionID(ctx context.Context, param models.GetRecurrentTransactionByIDAndDateParam) (uuid.UUID, error) {
+	if t.ReadRecurrentError != nil {
+		return uuid.UUID{}, t.ReadRecurrentError
+	}
+	return t.RecurrentTransactionID, nil
 }
 
 func (t *TransactionsRepositoryMock) ReadTransactionById(ctx context.Context, id uuid.UUID) (models.Transaction, error) {

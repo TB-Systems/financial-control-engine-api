@@ -53,5 +53,8 @@ type Store interface {
 	GetShortAnnualTransactionByID(ctx context.Context, id uuid.UUID) (pgstore.AnnualTransaction, error)
 	GetShortInstallmentTransactionByID(ctx context.Context, id uuid.UUID) (pgstore.InstallmentTransaction, error)
 	ListTransactionsByUserAndMonthYearPaginated(ctx context.Context, arg pgstore.ListTransactionsByUserAndMonthYearPaginatedParams) ([]pgstore.ListTransactionsByUserAndMonthYearPaginatedRow, error)
+	GetTransactionByMonthlyTransactionID(ctx context.Context, arg pgstore.GetTransactionByMonthlyTransactionIDParams) (uuid.UUID, error)
+	GetTransactionByAnnualTransactionID(ctx context.Context, arg pgstore.GetTransactionByAnnualTransactionIDParams) (uuid.UUID, error)
+	GetTransactionByInstallmentTransactionID(ctx context.Context, arg pgstore.GetTransactionByInstallmentTransactionIDParams) (uuid.UUID, error)
 	WithTx(tx pgx.Tx) *pgstore.Queries
 }

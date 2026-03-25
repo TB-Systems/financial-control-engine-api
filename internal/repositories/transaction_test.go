@@ -24,6 +24,8 @@ type TransactionStoreMock struct {
 	UpdateError              error
 	DeleteError              error
 	PayError                 error
+	FindRecurrentError       error
+	RecurrentTransactionID   uuid.UUID
 	TransactionResult        pgstore.CreateTransactionRow
 	TransactionByIdResult    pgstore.GetTransactionByIDRow
 	TransactionUpdatedResult pgstore.Transaction
@@ -199,6 +201,24 @@ func (m *TransactionStoreMock) GetShortAnnualTransactionByID(ctx context.Context
 }
 func (m *TransactionStoreMock) GetShortInstallmentTransactionByID(ctx context.Context, id uuid.UUID) (pgstore.InstallmentTransaction, error) {
 	return pgstore.InstallmentTransaction{}, nil
+}
+func (m *TransactionStoreMock) GetTransactionByMonthlyTransactionID(ctx context.Context, arg pgstore.GetTransactionByMonthlyTransactionIDParams) (uuid.UUID, error) {
+	if m.FindRecurrentError != nil {
+		return uuid.UUID{}, m.FindRecurrentError
+	}
+	return m.RecurrentTransactionID, nil
+}
+func (m *TransactionStoreMock) GetTransactionByAnnualTransactionID(ctx context.Context, arg pgstore.GetTransactionByAnnualTransactionIDParams) (uuid.UUID, error) {
+	if m.FindRecurrentError != nil {
+		return uuid.UUID{}, m.FindRecurrentError
+	}
+	return m.RecurrentTransactionID, nil
+}
+func (m *TransactionStoreMock) GetTransactionByInstallmentTransactionID(ctx context.Context, arg pgstore.GetTransactionByInstallmentTransactionIDParams) (uuid.UUID, error) {
+	if m.FindRecurrentError != nil {
+		return uuid.UUID{}, m.FindRecurrentError
+	}
+	return m.RecurrentTransactionID, nil
 }
 func (m *TransactionStoreMock) WithTx(tx pgx.Tx) *pgstore.Queries {
 	return nil

@@ -194,6 +194,15 @@ func (m *CreditCardStoreMock) GetShortAnnualTransactionByID(ctx context.Context,
 func (m *CreditCardStoreMock) GetShortInstallmentTransactionByID(ctx context.Context, id uuid.UUID) (pgstore.InstallmentTransaction, error) {
 	return pgstore.InstallmentTransaction{}, nil
 }
+func (m *CreditCardStoreMock) GetTransactionByMonthlyTransactionID(ctx context.Context, arg pgstore.GetTransactionByMonthlyTransactionIDParams) (uuid.UUID, error) {
+	return uuid.UUID{}, nil
+}
+func (m *CreditCardStoreMock) GetTransactionByAnnualTransactionID(ctx context.Context, arg pgstore.GetTransactionByAnnualTransactionIDParams) (uuid.UUID, error) {
+	return uuid.UUID{}, nil
+}
+func (m *CreditCardStoreMock) GetTransactionByInstallmentTransactionID(ctx context.Context, arg pgstore.GetTransactionByInstallmentTransactionIDParams) (uuid.UUID, error) {
+	return uuid.UUID{}, nil
+}
 func (m *CreditCardStoreMock) WithTx(tx pgx.Tx) *pgstore.Queries {
 	return nil
 }

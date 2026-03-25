@@ -181,6 +181,15 @@ func (m *InstallmentStoreMock) GetShortInstallmentTransactionByID(ctx context.Co
 	}
 	return m.ShortInstallmentRowResult, nil
 }
+func (m *InstallmentStoreMock) GetTransactionByMonthlyTransactionID(ctx context.Context, arg pgstore.GetTransactionByMonthlyTransactionIDParams) (uuid.UUID, error) {
+	return uuid.UUID{}, nil
+}
+func (m *InstallmentStoreMock) GetTransactionByAnnualTransactionID(ctx context.Context, arg pgstore.GetTransactionByAnnualTransactionIDParams) (uuid.UUID, error) {
+	return uuid.UUID{}, nil
+}
+func (m *InstallmentStoreMock) GetTransactionByInstallmentTransactionID(ctx context.Context, arg pgstore.GetTransactionByInstallmentTransactionIDParams) (uuid.UUID, error) {
+	return uuid.UUID{}, nil
+}
 func (m *InstallmentStoreMock) WithTx(tx pgx.Tx) *pgstore.Queries {
 	return nil
 }

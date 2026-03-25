@@ -76,8 +76,27 @@ func (t transaction) CreateFromMonthlyTransaction(ctx context.Context, request d
 		return dtos.TransactionResponse{}, apiErr
 	}
 
+	param := models.GetRecurrentTransactionByIDAndDateParam(request)
+	relations, apiErr := getRelations(t.repository, ctx, userID, monthlyTransaction.CreditCardID, monthlyTransaction.CategoryID)
+
+	if apiErr != nil {
+		return dtos.TransactionResponse{}, apiErr
+	}
+
+	id, err := t.repository.ReadTransactionByMonthlyTransactionID(ctx, param)
+
+	if err != nil {
+		if err.Error() != constants.StoreErrorNoRowsMsg {
+			return dtos.TransactionResponse{}, errors.NewApiError(http.StatusInternalServerError, errors.InternalServerError(err.Error()))
+		}
+	}
+
+	if id != uuid.Nil {
+		return dtos.TransactionResponse{}, errors.NewApiError(http.StatusBadRequest, errors.BadRequestError(constants.MonthlyTransactionAlreadyExistsMsg))
+	}
+
 	now := time.Now()
-	date := time.Date(now.Year(), now.Month(), int(monthlyTransaction.Day), 0, 0, 0, 0, now.Location())
+	date := getRecurrentTransactionDate(now, request.Year, request.Month, int(monthlyTransaction.Day), relations)
 
 	createRequest := dtos.TransactionRequest{
 		Name:                 monthlyTransaction.Name,
@@ -90,12 +109,6 @@ func (t transaction) CreateFromMonthlyTransaction(ctx context.Context, request d
 	}
 
 	createModel := modelsdto.CreateTransactionFromTransactionRequest(createRequest, userID)
-
-	relations, apiErr := getRelations(t.repository, ctx, userID, createRequest.CreditcardID, createRequest.CategoryID)
-
-	if apiErr != nil {
-		return dtos.TransactionResponse{}, apiErr
-	}
 
 	transaction, err := t.repository.CreateTransaction(ctx, createModel)
 
@@ -124,8 +137,27 @@ func (t transaction) CreateFromAnnualTransaction(ctx context.Context, request dt
 		return dtos.TransactionResponse{}, apiErr
 	}
 
+	param := models.GetRecurrentTransactionByIDAndDateParam(request)
+	relations, apiErr := getRelations(t.repository, ctx, userID, annualTransaction.CreditCardID, annualTransaction.CategoryID)
+
+	if apiErr != nil {
+		return dtos.TransactionResponse{}, apiErr
+	}
+
+	id, err := t.repository.ReadTransactionByAnnualTransactionID(ctx, param)
+
+	if err != nil {
+		if err.Error() != constants.StoreErrorNoRowsMsg {
+			return dtos.TransactionResponse{}, errors.NewApiError(http.StatusInternalServerError, errors.InternalServerError(err.Error()))
+		}
+	}
+
+	if id != uuid.Nil {
+		return dtos.TransactionResponse{}, errors.NewApiError(http.StatusBadRequest, errors.BadRequestError(constants.AnnualTransactionAlreadyExistsMsg))
+	}
+
 	now := time.Now()
-	date := time.Date(now.Year(), time.Month(annualTransaction.Month), int(annualTransaction.Day), 0, 0, 0, 0, now.Location())
+	date := getRecurrentTransactionDate(now, request.Year, request.Month, int(annualTransaction.Day), relations)
 
 	createRequest := dtos.TransactionRequest{
 		Name:                annualTransaction.Name,
@@ -138,12 +170,6 @@ func (t transaction) CreateFromAnnualTransaction(ctx context.Context, request dt
 	}
 
 	createModel := modelsdto.CreateTransactionFromTransactionRequest(createRequest, userID)
-
-	relations, apiErr := getRelations(t.repository, ctx, userID, createRequest.CreditcardID, createRequest.CategoryID)
-
-	if apiErr != nil {
-		return dtos.TransactionResponse{}, apiErr
-	}
 
 	transaction, err := t.repository.CreateTransaction(ctx, createModel)
 
@@ -172,8 +198,27 @@ func (t transaction) CreateFromInstallmentTransaction(ctx context.Context, reque
 		return dtos.TransactionResponse{}, apiErr
 	}
 
+	param := models.GetRecurrentTransactionByIDAndDateParam(request)
+	relations, apiErr := getRelations(t.repository, ctx, userID, installmentTransaction.CreditCardID, installmentTransaction.CategoryID)
+
+	if apiErr != nil {
+		return dtos.TransactionResponse{}, apiErr
+	}
+
+	id, err := t.repository.ReadTransactionByInstallmentTransactionID(ctx, param)
+
+	if err != nil {
+		if err.Error() != constants.StoreErrorNoRowsMsg {
+			return dtos.TransactionResponse{}, errors.NewApiError(http.StatusInternalServerError, errors.InternalServerError(err.Error()))
+		}
+	}
+
+	if id != uuid.Nil {
+		return dtos.TransactionResponse{}, errors.NewApiError(http.StatusBadRequest, errors.BadRequestError(constants.InstallmentTransactionAlreadyExistsMsg))
+	}
+
 	now := time.Now()
-	date := time.Date(now.Year(), now.Month(), installmentTransaction.InitialDate.Day(), 0, 0, 0, 0, now.Location())
+	date := getRecurrentTransactionDate(now, request.Year, request.Month, installmentTransaction.InitialDate.Day(), relations)
 
 	totalInstallments := ((installmentTransaction.FinalDate.Year()-installmentTransaction.InitialDate.Year())*12 +
 		int(installmentTransaction.FinalDate.Month()-installmentTransaction.InitialDate.Month())) + 1
@@ -182,8 +227,8 @@ func (t transaction) CreateFromInstallmentTransaction(ctx context.Context, reque
 		totalInstallments = 1
 	}
 
-	currentInstallment := ((now.Year()-installmentTransaction.InitialDate.Year())*12 +
-		int(now.Month()-installmentTransaction.InitialDate.Month())) + 1
+	currentInstallment := ((date.Year()-installmentTransaction.InitialDate.Year())*12 +
+		int(date.Month()-installmentTransaction.InitialDate.Month())) + 1
 
 	if currentInstallment < 1 {
 		currentInstallment = 1
@@ -206,12 +251,6 @@ func (t transaction) CreateFromInstallmentTransaction(ctx context.Context, reque
 	}
 
 	createModel := modelsdto.CreateTransactionFromTransactionRequest(createRequest, userID)
-
-	relations, apiErr := getRelations(t.repository, ctx, userID, createRequest.CreditcardID, createRequest.CategoryID)
-
-	if apiErr != nil {
-		return dtos.TransactionResponse{}, apiErr
-	}
 
 	transaction, err := t.repository.CreateTransaction(ctx, createModel)
 
@@ -251,6 +290,52 @@ func (t transaction) Read(ctx context.Context, params commonsmodels.PaginatedPar
 		PageCount: (count / int64(params.Limit)) + 1,
 		Page:      int64(params.Page),
 	}, nil
+}
+
+func getRecurrentTransactionDate(now time.Time, year int32, month int32, preferredDay int, relations dtos.TransactionRelations) time.Time {
+	location := now.Location()
+
+	if month < 1 || month > 12 {
+		month = int32(now.Month())
+	}
+
+	if year < 1 {
+		year = int32(now.Year())
+	}
+
+	baseDate := time.Date(int(year), time.Month(month), 1, 0, 0, 0, 0, location)
+
+	if relations.CategoryModel.TransactionType == models.Credit && relations.CreditcardModel != nil {
+		creditReference := baseDate.AddDate(0, -1, 0)
+		day := clampDay(preferredDay, creditReference.Year(), creditReference.Month())
+		closeDay := int(relations.CreditcardModel.CloseDay)
+
+		if closeDay > 0 && day > closeDay {
+			day = closeDay
+		}
+
+		if day < 1 {
+			day = 1
+		}
+
+		return time.Date(creditReference.Year(), creditReference.Month(), day, 0, 0, 0, 0, location)
+	}
+
+	day := clampDay(preferredDay, int(year), time.Month(month))
+	return time.Date(int(year), time.Month(month), day, 0, 0, 0, 0, location)
+}
+
+func clampDay(day int, year int, month time.Month) int {
+	if day < 1 {
+		return 1
+	}
+
+	lastDayOfMonth := time.Date(year, month+1, 0, 0, 0, 0, 0, time.UTC).Day()
+	if day > lastDayOfMonth {
+		return lastDayOfMonth
+	}
+
+	return day
 }
 
 func (t transaction) ReadInToDates(ctx context.Context, params commonsmodels.PaginatedParamsWithDateRange) (commonsmodels.PaginatedResponse[dtos.TransactionResponse], errors.ApiError) {
