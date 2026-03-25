@@ -88,31 +88,36 @@ ORDER BY at.month ASC, at.day ASC
 LIMIT $2 OFFSET $3;
 
 -- name: ListAnnualTransactionsIDs :many
-SELECT DISTINCT t.annual_transactions_id::uuid
-FROM transactions t
-LEFT JOIN categories c ON t.category_id = c.id
-LEFT JOIN credit_cards cc ON t.credit_card_id = cc.id
-WHERE t.user_id = sqlc.arg(user_id)
-  AND t.annual_transactions_id IS NOT NULL
-  AND (
-      (
-          c.transaction_type IN (0, 1)
-          AND EXTRACT(YEAR FROM t.date) = sqlc.arg(year)::int
-          AND EXTRACT(MONTH FROM t.date) = sqlc.arg(month)::int
-      )
-      OR
-      (
-          c.transaction_type = 2
-          AND t.credit_card_id IS NOT NULL
-          AND t.date > (
-              make_date(sqlc.arg(year)::int, sqlc.arg(month)::int, 1) - INTERVAL '2 months' + (cc.close_day || ' days')::INTERVAL
-          )
-          AND t.date <= (
-              make_date(sqlc.arg(year)::int, sqlc.arg(month)::int, 1) - INTERVAL '1 month' + (cc.close_day || ' days')::INTERVAL
-          )
-      )
+SELECT at.id
+FROM annual_transactions at
+LEFT JOIN categories c ON at.category_id = c.id
+LEFT JOIN credit_cards cc ON at.credit_card_id = cc.id
+WHERE at.user_id = sqlc.arg(user_id)
+  AND NOT EXISTS (
+      SELECT 1
+      FROM transactions t
+      WHERE t.user_id = at.user_id
+        AND t.annual_transactions_id = at.id
+        AND (
+            (
+                c.transaction_type IN (0, 1)
+                AND EXTRACT(YEAR FROM t.date) = sqlc.arg(year)::int
+                AND EXTRACT(MONTH FROM t.date) = sqlc.arg(month)::int
+            )
+            OR
+            (
+                c.transaction_type = 2
+                AND t.credit_card_id IS NOT NULL
+                AND t.date > (
+                    make_date(sqlc.arg(year)::int, sqlc.arg(month)::int, 1) - INTERVAL '2 months' + (cc.close_day || ' days')::INTERVAL
+                )
+                AND t.date <= (
+                    make_date(sqlc.arg(year)::int, sqlc.arg(month)::int, 1) - INTERVAL '1 month' + (cc.close_day || ' days')::INTERVAL
+                )
+            )
+        )
   )
-ORDER BY t.annual_transactions_id;
+ORDER BY at.month, at.day, at.id;
 
 -- name: UpdateAnnualTransaction :one
 UPDATE annual_transactions

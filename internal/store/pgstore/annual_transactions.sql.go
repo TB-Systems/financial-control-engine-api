@@ -309,31 +309,36 @@ func (q *Queries) ListAnnualTransactionsByUserIDPaginated(ctx context.Context, a
 }
 
 const listAnnualTransactionsIDs = `-- name: ListAnnualTransactionsIDs :many
-SELECT DISTINCT t.annual_transactions_id::uuid
-FROM transactions t
-LEFT JOIN categories c ON t.category_id = c.id
-LEFT JOIN credit_cards cc ON t.credit_card_id = cc.id
-WHERE t.user_id = $1
-  AND t.annual_transactions_id IS NOT NULL
-  AND (
-      (
-          c.transaction_type IN (0, 1)
-          AND EXTRACT(YEAR FROM t.date) = $2::int
-          AND EXTRACT(MONTH FROM t.date) = $3::int
-      )
-      OR
-      (
-          c.transaction_type = 2
-          AND t.credit_card_id IS NOT NULL
-          AND t.date > (
-              make_date($2::int, $3::int, 1) - INTERVAL '2 months' + (cc.close_day || ' days')::INTERVAL
-          )
-          AND t.date <= (
-              make_date($2::int, $3::int, 1) - INTERVAL '1 month' + (cc.close_day || ' days')::INTERVAL
-          )
-      )
+SELECT at.id
+FROM annual_transactions at
+LEFT JOIN categories c ON at.category_id = c.id
+LEFT JOIN credit_cards cc ON at.credit_card_id = cc.id
+WHERE at.user_id = $1
+  AND NOT EXISTS (
+      SELECT 1
+      FROM transactions t
+      WHERE t.user_id = at.user_id
+        AND t.annual_transactions_id = at.id
+        AND (
+            (
+                c.transaction_type IN (0, 1)
+                AND EXTRACT(YEAR FROM t.date) = $2::int
+                AND EXTRACT(MONTH FROM t.date) = $3::int
+            )
+            OR
+            (
+                c.transaction_type = 2
+                AND t.credit_card_id IS NOT NULL
+                AND t.date > (
+                    make_date($2::int, $3::int, 1) - INTERVAL '2 months' + (cc.close_day || ' days')::INTERVAL
+                )
+                AND t.date <= (
+                    make_date($2::int, $3::int, 1) - INTERVAL '1 month' + (cc.close_day || ' days')::INTERVAL
+                )
+            )
+        )
   )
-ORDER BY t.annual_transactions_id
+ORDER BY at.month, at.day, at.id
 `
 
 type ListAnnualTransactionsIDsParams struct {
@@ -350,11 +355,11 @@ func (q *Queries) ListAnnualTransactionsIDs(ctx context.Context, arg ListAnnualT
 	defer rows.Close()
 	var items []uuid.UUID
 	for rows.Next() {
-		var t_annual_transactions_id uuid.UUID
-		if err := rows.Scan(&t_annual_transactions_id); err != nil {
+		var id uuid.UUID
+		if err := rows.Scan(&id); err != nil {
 			return nil, err
 		}
-		items = append(items, t_annual_transactions_id)
+		items = append(items, id)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
