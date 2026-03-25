@@ -19,6 +19,7 @@ import (
 type InstallmentTransaction interface {
 	Create(ctx context.Context, userID uuid.UUID, request dtos.InstallmentTransactionRequest) (dtos.InstallmentTransactionResponse, errors.ApiError)
 	Read(ctx context.Context, params commonsmodels.PaginatedParams) (commonsmodels.PaginatedResponse[dtos.InstallmentTransactionResponse], errors.ApiError)
+	ReadIDs(ctx context.Context, userID uuid.UUID) (commonsmodels.ResponseList[uuid.UUID], errors.ApiError)
 	ReadById(ctx context.Context, userID uuid.UUID, id uuid.UUID) (dtos.InstallmentTransactionResponse, errors.ApiError)
 	Update(ctx context.Context, userID uuid.UUID, id uuid.UUID, request dtos.InstallmentTransactionRequest) (dtos.InstallmentTransactionResponse, errors.ApiError)
 	Delete(ctx context.Context, userID uuid.UUID, id uuid.UUID) errors.ApiError
@@ -75,6 +76,16 @@ func (s *installmentTransaction) Read(ctx context.Context, params commonsmodels.
 		PageCount: (count / int64(params.Limit)) + 1,
 		Page:      int64(params.Page),
 	}, nil
+}
+
+func (s *installmentTransaction) ReadIDs(ctx context.Context, userID uuid.UUID) (commonsmodels.ResponseList[uuid.UUID], errors.ApiError) {
+	ids, err := s.repository.ReadInstallmentTransactionsIDs(ctx, userID)
+
+	if err != nil {
+		return commonsmodels.ResponseList[uuid.UUID]{}, errors.NewApiError(http.StatusInternalServerError, errors.InternalServerError(err.Error()))
+	}
+
+	return commonsmodels.ResponseList[uuid.UUID]{Items: ids, Total: len(ids)}, nil
 }
 
 func (s *installmentTransaction) ReadById(ctx context.Context, userID uuid.UUID, id uuid.UUID) (dtos.InstallmentTransactionResponse, errors.ApiError) {

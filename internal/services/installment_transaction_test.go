@@ -19,6 +19,7 @@ import (
 
 type InstallmentTransactionRepositoryMock struct {
 	Error                            error
+	IDsError                         error
 	CategoryError                    error
 	CreditcardError                  error
 	CreateError                      error
@@ -27,6 +28,7 @@ type InstallmentTransactionRepositoryMock struct {
 	InstallmentTransactionResult     models.ShortInstallmentTransaction
 	InstallmentTransactionFullResult models.InstallmentTransaction
 	InstallmentTransactionsResult    []models.InstallmentTransaction
+	InstallmentTransactionsIDsResult []uuid.UUID
 	InstallmentTransactionsCount     int64
 	CategoryResult                   models.Category
 	CreditcardResult                 models.CreditCard
@@ -65,6 +67,13 @@ func (m *InstallmentTransactionRepositoryMock) ReadInstallmentTransactionsByUser
 		return nil, 0, m.Error
 	}
 	return m.InstallmentTransactionsResult, m.InstallmentTransactionsCount, nil
+}
+
+func (m *InstallmentTransactionRepositoryMock) ReadInstallmentTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
+	if m.IDsError != nil {
+		return nil, m.IDsError
+	}
+	return m.InstallmentTransactionsIDsResult, nil
 }
 
 func (m *InstallmentTransactionRepositoryMock) ReadInstallmentTransactionByID(ctx context.Context, id uuid.UUID) (models.InstallmentTransaction, error) {

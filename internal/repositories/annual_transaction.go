@@ -16,6 +16,7 @@ type AnnualTransaction interface {
 	ReadCreditCardByID(context context.Context, creditCardId uuid.UUID) (models.CreditCard, error)
 	CreateAnnualTransaction(ctx context.Context, request models.CreateAnnualTransaction) (models.ShortAnnualTransaction, error)
 	ReadAnnualTransactionsByUserIDPaginated(ctx context.Context, params commonsmodels.PaginatedParams) ([]models.AnnualTransaction, int64, error)
+	ReadAnnualTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error)
 	ReadAnnualTransactionByID(ctx context.Context, id uuid.UUID) (models.AnnualTransaction, error)
 	ReadShortAnnualTransactionByID(ctx context.Context, id uuid.UUID) (models.ShortAnnualTransaction, error)
 	ReadShortMonthlyTransactionByID(ctx context.Context, id uuid.UUID) (models.ShortMonthlyTransaction, error)
@@ -113,6 +114,20 @@ func (r Repository) ReadAnnualTransactionsByUserIDPaginated(ctx context.Context,
 	}
 
 	return transactions, count, nil
+}
+
+func (r Repository) ReadAnnualTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
+	ids, err := r.store.ListAnnualTransactionsIDs(ctx, userID)
+
+	if err != nil {
+		return []uuid.UUID{}, err
+	}
+
+	if len(ids) == 0 {
+		return []uuid.UUID{}, nil
+	}
+
+	return ids, nil
 }
 
 func (r Repository) ReadAnnualTransactionByID(ctx context.Context, id uuid.UUID) (models.AnnualTransaction, error) {

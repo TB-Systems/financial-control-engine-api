@@ -43,6 +43,7 @@ func (a *Api) RegisterRoutes() {
 	{
 		monthlyTransactions.POST("/", a.monthlyTransactionsHandler.Create())
 		monthlyTransactions.GET("/", a.monthlyTransactionsHandler.Read())
+		monthlyTransactions.GET("/ids", a.monthlyTransactionsHandler.ReadIDs())
 		monthlyTransactions.GET("/:id", a.monthlyTransactionsHandler.ReadById())
 		monthlyTransactions.PUT("/:id", a.monthlyTransactionsHandler.Update())
 		monthlyTransactions.DELETE("/:id", a.monthlyTransactionsHandler.Delete())
@@ -52,6 +53,7 @@ func (a *Api) RegisterRoutes() {
 	{
 		annualTransactions.POST("/", a.annualTransactionsHandler.Create())
 		annualTransactions.GET("/", a.annualTransactionsHandler.Read())
+		annualTransactions.GET("/ids", a.annualTransactionsHandler.ReadIDs())
 		annualTransactions.GET("/:id", a.annualTransactionsHandler.ReadById())
 		annualTransactions.PUT("/:id", a.annualTransactionsHandler.Update())
 		annualTransactions.DELETE("/:id", a.annualTransactionsHandler.Delete())
@@ -61,6 +63,7 @@ func (a *Api) RegisterRoutes() {
 	{
 		installmentTransactions.POST("/", a.installmentTransactionsHandler.Create())
 		installmentTransactions.GET("/", a.installmentTransactionsHandler.Read())
+		installmentTransactions.GET("/ids", a.installmentTransactionsHandler.ReadIDs())
 		installmentTransactions.GET("/:id", a.installmentTransactionsHandler.ReadById())
 		installmentTransactions.PUT("/:id", a.installmentTransactionsHandler.Update())
 		installmentTransactions.DELETE("/:id", a.installmentTransactionsHandler.Delete())

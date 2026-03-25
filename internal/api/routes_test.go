@@ -92,10 +92,9 @@ func TestRegisterRoutesCount(t *testing.T) {
 
 	routes := router.Routes()
 
-	// Expected: 5 routes per resource (POST, GET, GET/:id, PUT/:id, DELETE/:id)
-	// categories: 5, creditcards: 5, transactions: 10 (monthly, annual, installment, report, pay extras), monthly: 5, annual: 5, installment: 5, monthly_report: 1
-	// Total: 36
-	expectedCount := 36
+	// Includes 3 extra recurrent IDs endpoints:
+	// /monthly_transactions/ids, /annual_transactions/ids, /installment_transactions/ids
+	expectedCount := 39
 	if len(routes) != expectedCount {
 		t.Errorf("Expected %d routes, got %d", expectedCount, len(routes))
 	}

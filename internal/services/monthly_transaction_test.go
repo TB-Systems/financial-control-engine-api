@@ -19,6 +19,7 @@ import (
 
 type MonthlyTransactionRepositoryMock struct {
 	Error                        error
+	IDsError                     error
 	CategoryError                error
 	CreditcardError              error
 	CreateError                  error
@@ -27,6 +28,7 @@ type MonthlyTransactionRepositoryMock struct {
 	MonthlyTransactionResult     models.ShortMonthlyTransaction
 	MonthlyTransactionFullResult models.MonthlyTransaction
 	MonthlyTransactionsResult    []models.MonthlyTransaction
+	MonthlyTransactionsIDsResult []uuid.UUID
 	MonthlyTransactionsCount     int64
 	CategoryResult               models.Category
 	CreditcardResult             models.CreditCard
@@ -69,6 +71,13 @@ func (m *MonthlyTransactionRepositoryMock) ReadMonthlyTransactionsByUserIDPagina
 		return nil, 0, m.Error
 	}
 	return m.MonthlyTransactionsResult, m.MonthlyTransactionsCount, nil
+}
+
+func (m *MonthlyTransactionRepositoryMock) ReadMonthlyTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
+	if m.IDsError != nil {
+		return nil, m.IDsError
+	}
+	return m.MonthlyTransactionsIDsResult, nil
 }
 
 func (m *MonthlyTransactionRepositoryMock) ReadMonthlyTransactionByID(ctx context.Context, id uuid.UUID) (models.MonthlyTransaction, error) {

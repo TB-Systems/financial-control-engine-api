@@ -85,6 +85,26 @@ func (h *AnnualTransaction) Read() gin.HandlerFunc {
 	}
 }
 
+func (h *AnnualTransaction) ReadIDs() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		userID, apiErr := utils.GetUserIDFromContext(ctx)
+
+		if apiErr != nil {
+			utils.SendErrorResponse(ctx, apiErr)
+			return
+		}
+
+		data, apiErr := h.service.ReadIDs(ctx.Request.Context(), userID)
+
+		if apiErr != nil {
+			utils.SendErrorResponse(ctx, apiErr)
+			return
+		}
+
+		utils.SendResponse(ctx, data, http.StatusOK)
+	}
+}
+
 func (h *AnnualTransaction) ReadById() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		userID, apiErr := utils.GetUserIDFromContext(ctx)

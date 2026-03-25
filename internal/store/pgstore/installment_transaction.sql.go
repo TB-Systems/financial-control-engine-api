@@ -308,6 +308,32 @@ func (q *Queries) ListInstallmentTransactionsByUserIDPaginated(ctx context.Conte
 	return items, nil
 }
 
+const listInstallmentTransactionsIDs = `-- name: ListInstallmentTransactionsIDs :many
+SELECT id
+FROM installment_transactions
+WHERE user_id = $1
+`
+
+func (q *Queries) ListInstallmentTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
+	rows, err := q.db.Query(ctx, listInstallmentTransactionsIDs, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []uuid.UUID
+	for rows.Next() {
+		var id uuid.UUID
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateInstallmentTransaction = `-- name: UpdateInstallmentTransaction :one
 UPDATE installment_transactions
 SET

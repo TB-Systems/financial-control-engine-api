@@ -130,8 +130,20 @@ func (m *InstallmentStoreMock) ListCreditCards(ctx context.Context, userID uuid.
 func (m *InstallmentStoreMock) ListAnnualTransactionsByUserIDPaginated(ctx context.Context, arg pgstore.ListAnnualTransactionsByUserIDPaginatedParams) ([]pgstore.ListAnnualTransactionsByUserIDPaginatedRow, error) {
 	return nil, nil
 }
+func (m *InstallmentStoreMock) ListAnnualTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
+	return []uuid.UUID{}, nil
+}
 func (m *InstallmentStoreMock) ListMonthlyTransactionsByUserIDPaginated(ctx context.Context, arg pgstore.ListMonthlyTransactionsByUserIDPaginatedParams) ([]pgstore.ListMonthlyTransactionsByUserIDPaginatedRow, error) {
 	return nil, nil
+}
+func (m *InstallmentStoreMock) ListMonthlyTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
+	return []uuid.UUID{}, nil
+}
+func (m *InstallmentStoreMock) ListInstallmentTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
+	if m.Error != nil {
+		return nil, m.Error
+	}
+	return []uuid.UUID{}, nil
 }
 func (m *InstallmentStoreMock) ListTransactionsByUserAndDate(ctx context.Context, arg pgstore.ListTransactionsByUserAndDateParams) ([]pgstore.ListTransactionsByUserAndDateRow, error) {
 	return nil, nil

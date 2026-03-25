@@ -87,6 +87,11 @@ WHERE it.user_id = $1
 ORDER BY it.initial_date ASC, it.final_date ASC
 LIMIT $2 OFFSET $3;
 
+-- name: ListInstallmentTransactionsIDs :many
+SELECT id
+FROM installment_transactions
+WHERE user_id = $1;
+
 -- name: UpdateInstallmentTransaction :one
 UPDATE installment_transactions
 SET

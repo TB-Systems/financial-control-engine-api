@@ -27,6 +27,8 @@ type InstallmentTransactionServiceMock struct {
 	CreateError    apierrors.ApiError
 	ReadResult     commonsmodels.PaginatedResponse[dtos.InstallmentTransactionResponse]
 	ReadError      apierrors.ApiError
+	ReadIDsResult  commonsmodels.ResponseList[uuid.UUID]
+	ReadIDsError   apierrors.ApiError
 	ReadByIdResult dtos.InstallmentTransactionResponse
 	ReadByIdError  apierrors.ApiError
 	UpdateResult   dtos.InstallmentTransactionResponse
@@ -44,6 +46,10 @@ func (m *InstallmentTransactionServiceMock) Create(ctx context.Context, userID u
 
 func (m *InstallmentTransactionServiceMock) Read(ctx context.Context, params commonsmodels.PaginatedParams) (commonsmodels.PaginatedResponse[dtos.InstallmentTransactionResponse], apierrors.ApiError) {
 	return m.ReadResult, m.ReadError
+}
+
+func (m *InstallmentTransactionServiceMock) ReadIDs(ctx context.Context, userID uuid.UUID) (commonsmodels.ResponseList[uuid.UUID], apierrors.ApiError) {
+	return m.ReadIDsResult, m.ReadIDsError
 }
 
 func (m *InstallmentTransactionServiceMock) ReadById(ctx context.Context, userID uuid.UUID, id uuid.UUID) (dtos.InstallmentTransactionResponse, apierrors.ApiError) {

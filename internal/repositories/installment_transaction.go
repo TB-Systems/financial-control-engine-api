@@ -16,6 +16,7 @@ type InstallmentTransaction interface {
 	ReadCreditCardByID(context context.Context, creditCardId uuid.UUID) (models.CreditCard, error)
 	CreateInstallmentTransaction(ctx context.Context, request models.CreateInstallmentTransaction) (models.ShortInstallmentTransaction, error)
 	ReadInstallmentTransactionsByUserIDPaginated(ctx context.Context, params commonsmodels.PaginatedParams) ([]models.InstallmentTransaction, int64, error)
+	ReadInstallmentTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error)
 	ReadInstallmentTransactionByID(ctx context.Context, id uuid.UUID) (models.InstallmentTransaction, error)
 	ReadShortAnnualTransactionByID(ctx context.Context, id uuid.UUID) (models.ShortAnnualTransaction, error)
 	ReadShortMonthlyTransactionByID(ctx context.Context, id uuid.UUID) (models.ShortMonthlyTransaction, error)
@@ -114,6 +115,20 @@ func (r Repository) ReadInstallmentTransactionsByUserIDPaginated(ctx context.Con
 	}
 
 	return transactions, count, nil
+}
+
+func (r Repository) ReadInstallmentTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
+	ids, err := r.store.ListInstallmentTransactionsIDs(ctx, userID)
+
+	if err != nil {
+		return []uuid.UUID{}, err
+	}
+
+	if len(ids) == 0 {
+		return []uuid.UUID{}, nil
+	}
+
+	return ids, nil
 }
 
 func (r Repository) ReadInstallmentTransactionByID(ctx context.Context, id uuid.UUID) (models.InstallmentTransaction, error) {

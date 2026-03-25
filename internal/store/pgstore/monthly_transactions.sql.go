@@ -297,6 +297,32 @@ func (q *Queries) ListMonthlyTransactionsByUserIDPaginated(ctx context.Context, 
 	return items, nil
 }
 
+const listMonthlyTransactionsIDs = `-- name: ListMonthlyTransactionsIDs :many
+SELECT id
+FROM monthly_transactions
+WHERE user_id = $1
+`
+
+func (q *Queries) ListMonthlyTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
+	rows, err := q.db.Query(ctx, listMonthlyTransactionsIDs, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []uuid.UUID
+	for rows.Next() {
+		var id uuid.UUID
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateMonthlyTransaction = `-- name: UpdateMonthlyTransaction :one
 UPDATE monthly_transactions
 SET

@@ -143,11 +143,20 @@ func (m *CreditCardStoreMock) HasTransactionsByCategory(ctx context.Context, cat
 func (m *CreditCardStoreMock) ListAnnualTransactionsByUserIDPaginated(ctx context.Context, arg pgstore.ListAnnualTransactionsByUserIDPaginatedParams) ([]pgstore.ListAnnualTransactionsByUserIDPaginatedRow, error) {
 	return nil, nil
 }
+func (m *CreditCardStoreMock) ListAnnualTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
+	return []uuid.UUID{}, nil
+}
 func (m *CreditCardStoreMock) ListInstallmentTransactionsByUserIDPaginated(ctx context.Context, arg pgstore.ListInstallmentTransactionsByUserIDPaginatedParams) ([]pgstore.ListInstallmentTransactionsByUserIDPaginatedRow, error) {
 	return nil, nil
 }
+func (m *CreditCardStoreMock) ListInstallmentTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
+	return []uuid.UUID{}, nil
+}
 func (m *CreditCardStoreMock) ListMonthlyTransactionsByUserIDPaginated(ctx context.Context, arg pgstore.ListMonthlyTransactionsByUserIDPaginatedParams) ([]pgstore.ListMonthlyTransactionsByUserIDPaginatedRow, error) {
 	return nil, nil
+}
+func (m *CreditCardStoreMock) ListMonthlyTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
+	return []uuid.UUID{}, nil
 }
 func (m *CreditCardStoreMock) ListTransactionsByUserAndDate(ctx context.Context, arg pgstore.ListTransactionsByUserAndDateParams) ([]pgstore.ListTransactionsByUserAndDateRow, error) {
 	return nil, nil

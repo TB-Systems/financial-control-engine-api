@@ -19,6 +19,7 @@ import (
 type AnnualTransaction interface {
 	Create(ctx context.Context, userID uuid.UUID, request dtos.AnnualTransactionRequest) (dtos.AnnualTransactionResponse, errors.ApiError)
 	Read(ctx context.Context, params commonsmodels.PaginatedParams) (commonsmodels.PaginatedResponse[dtos.AnnualTransactionResponse], errors.ApiError)
+	ReadIDs(ctx context.Context, userID uuid.UUID) (commonsmodels.ResponseList[uuid.UUID], errors.ApiError)
 	ReadById(ctx context.Context, userID uuid.UUID, id uuid.UUID) (dtos.AnnualTransactionResponse, errors.ApiError)
 	Update(ctx context.Context, userID uuid.UUID, id uuid.UUID, request dtos.AnnualTransactionRequest) (dtos.AnnualTransactionResponse, errors.ApiError)
 	Delete(ctx context.Context, userID uuid.UUID, id uuid.UUID) errors.ApiError
@@ -75,6 +76,16 @@ func (a *annualTransaction) Read(ctx context.Context, params commonsmodels.Pagin
 		PageCount: (count / int64(params.Limit)) + 1,
 		Page:      int64(params.Page),
 	}, nil
+}
+
+func (a *annualTransaction) ReadIDs(ctx context.Context, userID uuid.UUID) (commonsmodels.ResponseList[uuid.UUID], errors.ApiError) {
+	ids, err := a.repository.ReadAnnualTransactionsIDs(ctx, userID)
+
+	if err != nil {
+		return commonsmodels.ResponseList[uuid.UUID]{}, errors.NewApiError(http.StatusInternalServerError, errors.InternalServerError(err.Error()))
+	}
+
+	return commonsmodels.ResponseList[uuid.UUID]{Items: ids, Total: len(ids)}, nil
 }
 
 func (a *annualTransaction) ReadById(ctx context.Context, userID uuid.UUID, id uuid.UUID) (dtos.AnnualTransactionResponse, errors.ApiError) {

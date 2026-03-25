@@ -87,6 +87,11 @@ WHERE at.user_id = $1
 ORDER BY at.month ASC, at.day ASC
 LIMIT $2 OFFSET $3;
 
+-- name: ListAnnualTransactionsIDs :many
+SELECT id
+FROM annual_transactions
+WHERE user_id = $1;
+
 -- name: UpdateAnnualTransaction :one
 UPDATE annual_transactions
 SET

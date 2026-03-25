@@ -18,6 +18,7 @@ import (
 
 type AnnualTransactionRepositoryMock struct {
 	Error                       error
+	IDsError                    error
 	CategoryError               error
 	CreditcardError             error
 	CreateError                 error
@@ -26,6 +27,7 @@ type AnnualTransactionRepositoryMock struct {
 	AnnualTransactionResult     models.ShortAnnualTransaction
 	AnnualTransactionFullResult models.AnnualTransaction
 	AnnualTransactionsResult    []models.AnnualTransaction
+	AnnualTransactionsIDsResult []uuid.UUID
 	AnnualTransactionsCount     int64
 	CategoryResult              models.Category
 	CreditcardResult            models.CreditCard
@@ -64,6 +66,13 @@ func (m *AnnualTransactionRepositoryMock) ReadAnnualTransactionsByUserIDPaginate
 		return nil, 0, m.Error
 	}
 	return m.AnnualTransactionsResult, m.AnnualTransactionsCount, nil
+}
+
+func (m *AnnualTransactionRepositoryMock) ReadAnnualTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
+	if m.IDsError != nil {
+		return nil, m.IDsError
+	}
+	return m.AnnualTransactionsIDsResult, nil
 }
 
 func (m *AnnualTransactionRepositoryMock) ReadAnnualTransactionByID(ctx context.Context, id uuid.UUID) (models.AnnualTransaction, error) {

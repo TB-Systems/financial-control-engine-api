@@ -27,6 +27,8 @@ type AnnualTransactionServiceMock struct {
 	CreateError    apierrors.ApiError
 	ReadResult     commonsmodels.PaginatedResponse[dtos.AnnualTransactionResponse]
 	ReadError      apierrors.ApiError
+	ReadIDsResult  commonsmodels.ResponseList[uuid.UUID]
+	ReadIDsError   apierrors.ApiError
 	ReadByIdResult dtos.AnnualTransactionResponse
 	ReadByIdError  apierrors.ApiError
 	UpdateResult   dtos.AnnualTransactionResponse
@@ -44,6 +46,10 @@ func (m *AnnualTransactionServiceMock) Create(ctx context.Context, userID uuid.U
 
 func (m *AnnualTransactionServiceMock) Read(ctx context.Context, params commonsmodels.PaginatedParams) (commonsmodels.PaginatedResponse[dtos.AnnualTransactionResponse], apierrors.ApiError) {
 	return m.ReadResult, m.ReadError
+}
+
+func (m *AnnualTransactionServiceMock) ReadIDs(ctx context.Context, userID uuid.UUID) (commonsmodels.ResponseList[uuid.UUID], apierrors.ApiError) {
+	return m.ReadIDsResult, m.ReadIDsError
 }
 
 func (m *AnnualTransactionServiceMock) ReadById(ctx context.Context, userID uuid.UUID, id uuid.UUID) (dtos.AnnualTransactionResponse, apierrors.ApiError) {
