@@ -94,7 +94,20 @@ func (h *MonthlyTransaction) ReadIDs() gin.HandlerFunc {
 			return
 		}
 
-		data, apiErr := h.service.ReadIDs(ctx.Request.Context(), userID)
+		month, year, apiErr := utils.GetQueryMonthAndYear(ctx)
+
+		if apiErr != nil {
+			utils.SendErrorResponse(ctx, apiErr)
+			return
+		}
+
+		params := commonsmodels.PaginatedParamsWithMonthYear{
+			UserID: userID,
+			Month:  month,
+			Year:   year,
+		}
+
+		data, apiErr := h.service.ReadIDs(ctx.Request.Context(), params)
 
 		if apiErr != nil {
 			utils.SendErrorResponse(ctx, apiErr)

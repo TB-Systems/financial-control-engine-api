@@ -88,9 +88,31 @@ ORDER BY it.initial_date ASC, it.final_date ASC
 LIMIT $2 OFFSET $3;
 
 -- name: ListInstallmentTransactionsIDs :many
-SELECT id
-FROM installment_transactions
-WHERE user_id = $1;
+SELECT DISTINCT t.installment_transactions_id::uuid
+FROM transactions t
+LEFT JOIN categories c ON t.category_id = c.id
+LEFT JOIN credit_cards cc ON t.credit_card_id = cc.id
+WHERE t.user_id = sqlc.arg(user_id)
+  AND t.installment_transactions_id IS NOT NULL
+  AND (
+      (
+          c.transaction_type IN (0, 1)
+          AND EXTRACT(YEAR FROM t.date) = sqlc.arg(year)::int
+          AND EXTRACT(MONTH FROM t.date) = sqlc.arg(month)::int
+      )
+      OR
+      (
+          c.transaction_type = 2
+          AND t.credit_card_id IS NOT NULL
+          AND t.date > (
+              make_date(sqlc.arg(year)::int, sqlc.arg(month)::int, 1) - INTERVAL '2 months' + (cc.close_day || ' days')::INTERVAL
+          )
+          AND t.date <= (
+              make_date(sqlc.arg(year)::int, sqlc.arg(month)::int, 1) - INTERVAL '1 month' + (cc.close_day || ' days')::INTERVAL
+          )
+      )
+  )
+ORDER BY t.installment_transactions_id;
 
 -- name: UpdateInstallmentTransaction :one
 UPDATE installment_transactions

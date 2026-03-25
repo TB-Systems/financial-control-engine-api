@@ -19,7 +19,7 @@ import (
 type InstallmentTransaction interface {
 	Create(ctx context.Context, userID uuid.UUID, request dtos.InstallmentTransactionRequest) (dtos.InstallmentTransactionResponse, errors.ApiError)
 	Read(ctx context.Context, params commonsmodels.PaginatedParams) (commonsmodels.PaginatedResponse[dtos.InstallmentTransactionResponse], errors.ApiError)
-	ReadIDs(ctx context.Context, userID uuid.UUID) (commonsmodels.ResponseList[uuid.UUID], errors.ApiError)
+	ReadIDs(ctx context.Context, params commonsmodels.PaginatedParamsWithMonthYear) (commonsmodels.ResponseList[uuid.UUID], errors.ApiError)
 	ReadById(ctx context.Context, userID uuid.UUID, id uuid.UUID) (dtos.InstallmentTransactionResponse, errors.ApiError)
 	Update(ctx context.Context, userID uuid.UUID, id uuid.UUID, request dtos.InstallmentTransactionRequest) (dtos.InstallmentTransactionResponse, errors.ApiError)
 	Delete(ctx context.Context, userID uuid.UUID, id uuid.UUID) errors.ApiError
@@ -78,8 +78,8 @@ func (s *installmentTransaction) Read(ctx context.Context, params commonsmodels.
 	}, nil
 }
 
-func (s *installmentTransaction) ReadIDs(ctx context.Context, userID uuid.UUID) (commonsmodels.ResponseList[uuid.UUID], errors.ApiError) {
-	ids, err := s.repository.ReadInstallmentTransactionsIDs(ctx, userID)
+func (s *installmentTransaction) ReadIDs(ctx context.Context, params commonsmodels.PaginatedParamsWithMonthYear) (commonsmodels.ResponseList[uuid.UUID], errors.ApiError) {
+	ids, err := s.repository.ReadInstallmentTransactionsIDs(ctx, params)
 
 	if err != nil {
 		return commonsmodels.ResponseList[uuid.UUID]{}, errors.NewApiError(http.StatusInternalServerError, errors.InternalServerError(err.Error()))

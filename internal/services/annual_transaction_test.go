@@ -68,7 +68,7 @@ func (m *AnnualTransactionRepositoryMock) ReadAnnualTransactionsByUserIDPaginate
 	return m.AnnualTransactionsResult, m.AnnualTransactionsCount, nil
 }
 
-func (m *AnnualTransactionRepositoryMock) ReadAnnualTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
+func (m *AnnualTransactionRepositoryMock) ReadAnnualTransactionsIDs(ctx context.Context, params commonsmodels.PaginatedParamsWithMonthYear) ([]uuid.UUID, error) {
 	if m.IDsError != nil {
 		return nil, m.IDsError
 	}

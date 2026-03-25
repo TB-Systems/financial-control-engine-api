@@ -16,7 +16,7 @@ type MonthlyTransaction interface {
 	ReadCreditCardByID(context context.Context, creditCardId uuid.UUID) (models.CreditCard, error)
 	CreateMonthlyTransaction(ctx context.Context, request models.CreateMonthlyTransaction) (models.ShortMonthlyTransaction, error)
 	ReadMonthlyTransactionsByUserIDPaginated(ctx context.Context, params commonsmodels.PaginatedParams) ([]models.MonthlyTransaction, int64, error)
-	ReadMonthlyTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error)
+	ReadMonthlyTransactionsIDs(ctx context.Context, params commonsmodels.PaginatedParamsWithMonthYear) ([]uuid.UUID, error)
 	ReadMonthlyTransactionByID(ctx context.Context, id uuid.UUID) (models.MonthlyTransaction, error)
 	ReadShortAnnualTransactionByID(ctx context.Context, id uuid.UUID) (models.ShortAnnualTransaction, error)
 	ReadShortMonthlyTransactionByID(ctx context.Context, id uuid.UUID) (models.ShortMonthlyTransaction, error)
@@ -113,8 +113,14 @@ func (r Repository) ReadMonthlyTransactionsByUserIDPaginated(ctx context.Context
 	return transactions, count, nil
 }
 
-func (r Repository) ReadMonthlyTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
-	ids, err := r.store.ListMonthlyTransactionsIDs(ctx, userID)
+func (r Repository) ReadMonthlyTransactionsIDs(ctx context.Context, params commonsmodels.PaginatedParamsWithMonthYear) ([]uuid.UUID, error) {
+	queryParams := pgstore.ListMonthlyTransactionsIDsParams{
+		UserID: params.UserID,
+		Year:   params.Year,
+		Month:  params.Month,
+	}
+
+	ids, err := r.store.ListMonthlyTransactionsIDs(ctx, queryParams)
 
 	if err != nil {
 		return []uuid.UUID{}, err

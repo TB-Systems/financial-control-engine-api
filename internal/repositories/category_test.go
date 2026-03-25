@@ -140,7 +140,7 @@ func (m *CategoryStoreMock) HasTransactionsByCreditCard(ctx context.Context, cre
 func (m *CategoryStoreMock) ListAnnualTransactionsByUserIDPaginated(ctx context.Context, arg pgstore.ListAnnualTransactionsByUserIDPaginatedParams) ([]pgstore.ListAnnualTransactionsByUserIDPaginatedRow, error) {
 	return nil, nil
 }
-func (m *CategoryStoreMock) ListAnnualTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
+func (m *CategoryStoreMock) ListAnnualTransactionsIDs(ctx context.Context, arg pgstore.ListAnnualTransactionsIDsParams) ([]uuid.UUID, error) {
 	return []uuid.UUID{}, nil
 }
 func (m *CategoryStoreMock) ListCreditCards(ctx context.Context, userID uuid.UUID) ([]pgstore.CreditCard, error) {
@@ -149,13 +149,13 @@ func (m *CategoryStoreMock) ListCreditCards(ctx context.Context, userID uuid.UUI
 func (m *CategoryStoreMock) ListInstallmentTransactionsByUserIDPaginated(ctx context.Context, arg pgstore.ListInstallmentTransactionsByUserIDPaginatedParams) ([]pgstore.ListInstallmentTransactionsByUserIDPaginatedRow, error) {
 	return nil, nil
 }
-func (m *CategoryStoreMock) ListInstallmentTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
+func (m *CategoryStoreMock) ListInstallmentTransactionsIDs(ctx context.Context, arg pgstore.ListInstallmentTransactionsIDsParams) ([]uuid.UUID, error) {
 	return []uuid.UUID{}, nil
 }
 func (m *CategoryStoreMock) ListMonthlyTransactionsByUserIDPaginated(ctx context.Context, arg pgstore.ListMonthlyTransactionsByUserIDPaginatedParams) ([]pgstore.ListMonthlyTransactionsByUserIDPaginatedRow, error) {
 	return nil, nil
 }
-func (m *CategoryStoreMock) ListMonthlyTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
+func (m *CategoryStoreMock) ListMonthlyTransactionsIDs(ctx context.Context, arg pgstore.ListMonthlyTransactionsIDsParams) ([]uuid.UUID, error) {
 	return []uuid.UUID{}, nil
 }
 func (m *CategoryStoreMock) ListTransactionsByUserAndDate(ctx context.Context, arg pgstore.ListTransactionsByUserAndDateParams) ([]pgstore.ListTransactionsByUserAndDateRow, error) {

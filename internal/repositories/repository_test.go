@@ -87,7 +87,7 @@ func (m *SimpleStoreMock) HasTransactionsByCreditCard(ctx context.Context, credi
 func (m *SimpleStoreMock) ListAnnualTransactionsByUserIDPaginated(ctx context.Context, arg pgstore.ListAnnualTransactionsByUserIDPaginatedParams) ([]pgstore.ListAnnualTransactionsByUserIDPaginatedRow, error) {
 	return nil, nil
 }
-func (m *SimpleStoreMock) ListAnnualTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
+func (m *SimpleStoreMock) ListAnnualTransactionsIDs(ctx context.Context, arg pgstore.ListAnnualTransactionsIDsParams) ([]uuid.UUID, error) {
 	return []uuid.UUID{}, nil
 }
 func (m *SimpleStoreMock) ListCreditCards(ctx context.Context, userID uuid.UUID) ([]pgstore.CreditCard, error) {
@@ -96,13 +96,13 @@ func (m *SimpleStoreMock) ListCreditCards(ctx context.Context, userID uuid.UUID)
 func (m *SimpleStoreMock) ListInstallmentTransactionsByUserIDPaginated(ctx context.Context, arg pgstore.ListInstallmentTransactionsByUserIDPaginatedParams) ([]pgstore.ListInstallmentTransactionsByUserIDPaginatedRow, error) {
 	return nil, nil
 }
-func (m *SimpleStoreMock) ListInstallmentTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
+func (m *SimpleStoreMock) ListInstallmentTransactionsIDs(ctx context.Context, arg pgstore.ListInstallmentTransactionsIDsParams) ([]uuid.UUID, error) {
 	return []uuid.UUID{}, nil
 }
 func (m *SimpleStoreMock) ListMonthlyTransactionsByUserIDPaginated(ctx context.Context, arg pgstore.ListMonthlyTransactionsByUserIDPaginatedParams) ([]pgstore.ListMonthlyTransactionsByUserIDPaginatedRow, error) {
 	return nil, nil
 }
-func (m *SimpleStoreMock) ListMonthlyTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
+func (m *SimpleStoreMock) ListMonthlyTransactionsIDs(ctx context.Context, arg pgstore.ListMonthlyTransactionsIDsParams) ([]uuid.UUID, error) {
 	return []uuid.UUID{}, nil
 }
 func (m *SimpleStoreMock) ListTransactionsByUserAndDate(ctx context.Context, arg pgstore.ListTransactionsByUserAndDateParams) ([]pgstore.ListTransactionsByUserAndDateRow, error) {

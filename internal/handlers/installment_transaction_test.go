@@ -48,7 +48,7 @@ func (m *InstallmentTransactionServiceMock) Read(ctx context.Context, params com
 	return m.ReadResult, m.ReadError
 }
 
-func (m *InstallmentTransactionServiceMock) ReadIDs(ctx context.Context, userID uuid.UUID) (commonsmodels.ResponseList[uuid.UUID], apierrors.ApiError) {
+func (m *InstallmentTransactionServiceMock) ReadIDs(ctx context.Context, params commonsmodels.PaginatedParamsWithMonthYear) (commonsmodels.ResponseList[uuid.UUID], apierrors.ApiError) {
 	return m.ReadIDsResult, m.ReadIDsError
 }
 

@@ -19,7 +19,7 @@ import (
 type MonthlyTransaction interface {
 	Create(ctx context.Context, userID uuid.UUID, request dtos.MonthlyTransactionRequest) (dtos.MonthlyTransactionResponse, errors.ApiError)
 	Read(ctx context.Context, params commonsmodels.PaginatedParams) (commonsmodels.PaginatedResponse[dtos.MonthlyTransactionResponse], errors.ApiError)
-	ReadIDs(ctx context.Context, userID uuid.UUID) (commonsmodels.ResponseList[uuid.UUID], errors.ApiError)
+	ReadIDs(ctx context.Context, params commonsmodels.PaginatedParamsWithMonthYear) (commonsmodels.ResponseList[uuid.UUID], errors.ApiError)
 	ReadById(ctx context.Context, userID uuid.UUID, id uuid.UUID) (dtos.MonthlyTransactionResponse, errors.ApiError)
 	Update(ctx context.Context, userID uuid.UUID, id uuid.UUID, request dtos.MonthlyTransactionRequest) (dtos.MonthlyTransactionResponse, errors.ApiError)
 	Delete(ctx context.Context, userID uuid.UUID, id uuid.UUID) errors.ApiError
@@ -78,8 +78,8 @@ func (m *monthlyTransaction) Read(ctx context.Context, params commonsmodels.Pagi
 	}, nil
 }
 
-func (m *monthlyTransaction) ReadIDs(ctx context.Context, userID uuid.UUID) (commonsmodels.ResponseList[uuid.UUID], errors.ApiError) {
-	ids, err := m.repository.ReadMonthlyTransactionsIDs(ctx, userID)
+func (m *monthlyTransaction) ReadIDs(ctx context.Context, params commonsmodels.PaginatedParamsWithMonthYear) (commonsmodels.ResponseList[uuid.UUID], errors.ApiError) {
+	ids, err := m.repository.ReadMonthlyTransactionsIDs(ctx, params)
 
 	if err != nil {
 		return commonsmodels.ResponseList[uuid.UUID]{}, errors.NewApiError(http.StatusInternalServerError, errors.InternalServerError(err.Error()))

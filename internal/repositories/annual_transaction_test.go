@@ -42,7 +42,7 @@ func (m *AnnualStoreMock) ListAnnualTransactionsByUserIDPaginated(ctx context.Co
 	return m.AnnualTransactionsResult, nil
 }
 
-func (m *AnnualStoreMock) ListAnnualTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
+func (m *AnnualStoreMock) ListAnnualTransactionsIDs(ctx context.Context, arg pgstore.ListAnnualTransactionsIDsParams) ([]uuid.UUID, error) {
 	if m.Error != nil {
 		return nil, m.Error
 	}
@@ -140,10 +140,10 @@ func (m *AnnualStoreMock) ListInstallmentTransactionsByUserIDPaginated(ctx conte
 func (m *AnnualStoreMock) ListMonthlyTransactionsByUserIDPaginated(ctx context.Context, arg pgstore.ListMonthlyTransactionsByUserIDPaginatedParams) ([]pgstore.ListMonthlyTransactionsByUserIDPaginatedRow, error) {
 	return nil, nil
 }
-func (m *AnnualStoreMock) ListInstallmentTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
+func (m *AnnualStoreMock) ListInstallmentTransactionsIDs(ctx context.Context, arg pgstore.ListInstallmentTransactionsIDsParams) ([]uuid.UUID, error) {
 	return []uuid.UUID{}, nil
 }
-func (m *AnnualStoreMock) ListMonthlyTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
+func (m *AnnualStoreMock) ListMonthlyTransactionsIDs(ctx context.Context, arg pgstore.ListMonthlyTransactionsIDsParams) ([]uuid.UUID, error) {
 	return []uuid.UUID{}, nil
 }
 func (m *AnnualStoreMock) ListTransactionsByUserAndDate(ctx context.Context, arg pgstore.ListTransactionsByUserAndDateParams) ([]pgstore.ListTransactionsByUserAndDateRow, error) {

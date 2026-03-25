@@ -309,24 +309,52 @@ func (q *Queries) ListInstallmentTransactionsByUserIDPaginated(ctx context.Conte
 }
 
 const listInstallmentTransactionsIDs = `-- name: ListInstallmentTransactionsIDs :many
-SELECT id
-FROM installment_transactions
-WHERE user_id = $1
+SELECT DISTINCT t.installment_transactions_id::uuid
+FROM transactions t
+LEFT JOIN categories c ON t.category_id = c.id
+LEFT JOIN credit_cards cc ON t.credit_card_id = cc.id
+WHERE t.user_id = $1
+  AND t.installment_transactions_id IS NOT NULL
+  AND (
+      (
+          c.transaction_type IN (0, 1)
+          AND EXTRACT(YEAR FROM t.date) = $2::int
+          AND EXTRACT(MONTH FROM t.date) = $3::int
+      )
+      OR
+      (
+          c.transaction_type = 2
+          AND t.credit_card_id IS NOT NULL
+          AND t.date > (
+              make_date($2::int, $3::int, 1) - INTERVAL '2 months' + (cc.close_day || ' days')::INTERVAL
+          )
+          AND t.date <= (
+              make_date($2::int, $3::int, 1) - INTERVAL '1 month' + (cc.close_day || ' days')::INTERVAL
+          )
+      )
+  )
+ORDER BY t.installment_transactions_id
 `
 
-func (q *Queries) ListInstallmentTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
-	rows, err := q.db.Query(ctx, listInstallmentTransactionsIDs, userID)
+type ListInstallmentTransactionsIDsParams struct {
+	UserID uuid.UUID `json:"user_id"`
+	Year   int32     `json:"year"`
+	Month  int32     `json:"month"`
+}
+
+func (q *Queries) ListInstallmentTransactionsIDs(ctx context.Context, arg ListInstallmentTransactionsIDsParams) ([]uuid.UUID, error) {
+	rows, err := q.db.Query(ctx, listInstallmentTransactionsIDs, arg.UserID, arg.Year, arg.Month)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 	var items []uuid.UUID
 	for rows.Next() {
-		var id uuid.UUID
-		if err := rows.Scan(&id); err != nil {
+		var t_installment_transactions_id uuid.UUID
+		if err := rows.Scan(&t_installment_transactions_id); err != nil {
 			return nil, err
 		}
-		items = append(items, id)
+		items = append(items, t_installment_transactions_id)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err

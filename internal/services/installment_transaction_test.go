@@ -69,7 +69,7 @@ func (m *InstallmentTransactionRepositoryMock) ReadInstallmentTransactionsByUser
 	return m.InstallmentTransactionsResult, m.InstallmentTransactionsCount, nil
 }
 
-func (m *InstallmentTransactionRepositoryMock) ReadInstallmentTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
+func (m *InstallmentTransactionRepositoryMock) ReadInstallmentTransactionsIDs(ctx context.Context, params commonsmodels.PaginatedParamsWithMonthYear) ([]uuid.UUID, error) {
 	if m.IDsError != nil {
 		return nil, m.IDsError
 	}

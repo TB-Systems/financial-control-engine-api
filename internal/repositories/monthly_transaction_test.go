@@ -124,7 +124,7 @@ func (m *StoreMock) HasTransactionsByCreditCard(ctx context.Context, creditCardI
 func (m *StoreMock) ListAnnualTransactionsByUserIDPaginated(ctx context.Context, arg pgstore.ListAnnualTransactionsByUserIDPaginatedParams) ([]pgstore.ListAnnualTransactionsByUserIDPaginatedRow, error) {
 	return nil, nil
 }
-func (m *StoreMock) ListAnnualTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
+func (m *StoreMock) ListAnnualTransactionsIDs(ctx context.Context, arg pgstore.ListAnnualTransactionsIDsParams) ([]uuid.UUID, error) {
 	return []uuid.UUID{}, nil
 }
 func (m *StoreMock) ListCreditCards(ctx context.Context, userID uuid.UUID) ([]pgstore.CreditCard, error) {
@@ -133,10 +133,10 @@ func (m *StoreMock) ListCreditCards(ctx context.Context, userID uuid.UUID) ([]pg
 func (m *StoreMock) ListInstallmentTransactionsByUserIDPaginated(ctx context.Context, arg pgstore.ListInstallmentTransactionsByUserIDPaginatedParams) ([]pgstore.ListInstallmentTransactionsByUserIDPaginatedRow, error) {
 	return nil, nil
 }
-func (m *StoreMock) ListInstallmentTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
+func (m *StoreMock) ListInstallmentTransactionsIDs(ctx context.Context, arg pgstore.ListInstallmentTransactionsIDsParams) ([]uuid.UUID, error) {
 	return []uuid.UUID{}, nil
 }
-func (m *StoreMock) ListMonthlyTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
+func (m *StoreMock) ListMonthlyTransactionsIDs(ctx context.Context, arg pgstore.ListMonthlyTransactionsIDsParams) ([]uuid.UUID, error) {
 	if m.Error != nil {
 		return nil, m.Error
 	}

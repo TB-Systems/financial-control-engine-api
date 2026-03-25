@@ -48,7 +48,7 @@ func (m *AnnualTransactionServiceMock) Read(ctx context.Context, params commonsm
 	return m.ReadResult, m.ReadError
 }
 
-func (m *AnnualTransactionServiceMock) ReadIDs(ctx context.Context, userID uuid.UUID) (commonsmodels.ResponseList[uuid.UUID], apierrors.ApiError) {
+func (m *AnnualTransactionServiceMock) ReadIDs(ctx context.Context, params commonsmodels.PaginatedParamsWithMonthYear) (commonsmodels.ResponseList[uuid.UUID], apierrors.ApiError) {
 	return m.ReadIDsResult, m.ReadIDsError
 }
 

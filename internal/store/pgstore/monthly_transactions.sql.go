@@ -298,24 +298,52 @@ func (q *Queries) ListMonthlyTransactionsByUserIDPaginated(ctx context.Context, 
 }
 
 const listMonthlyTransactionsIDs = `-- name: ListMonthlyTransactionsIDs :many
-SELECT id
-FROM monthly_transactions
-WHERE user_id = $1
+SELECT DISTINCT t.monthly_transactions_id::uuid
+FROM transactions t
+LEFT JOIN categories c ON t.category_id = c.id
+LEFT JOIN credit_cards cc ON t.credit_card_id = cc.id
+WHERE t.user_id = $1
+  AND t.monthly_transactions_id IS NOT NULL
+  AND (
+      (
+          c.transaction_type IN (0, 1)
+          AND EXTRACT(YEAR FROM t.date) = $2::int
+          AND EXTRACT(MONTH FROM t.date) = $3::int
+      )
+      OR
+      (
+          c.transaction_type = 2
+          AND t.credit_card_id IS NOT NULL
+          AND t.date > (
+              make_date($2::int, $3::int, 1) - INTERVAL '2 months' + (cc.close_day || ' days')::INTERVAL
+          )
+          AND t.date <= (
+              make_date($2::int, $3::int, 1) - INTERVAL '1 month' + (cc.close_day || ' days')::INTERVAL
+          )
+      )
+  )
+ORDER BY t.monthly_transactions_id
 `
 
-func (q *Queries) ListMonthlyTransactionsIDs(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
-	rows, err := q.db.Query(ctx, listMonthlyTransactionsIDs, userID)
+type ListMonthlyTransactionsIDsParams struct {
+	UserID uuid.UUID `json:"user_id"`
+	Year   int32     `json:"year"`
+	Month  int32     `json:"month"`
+}
+
+func (q *Queries) ListMonthlyTransactionsIDs(ctx context.Context, arg ListMonthlyTransactionsIDsParams) ([]uuid.UUID, error) {
+	rows, err := q.db.Query(ctx, listMonthlyTransactionsIDs, arg.UserID, arg.Year, arg.Month)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 	var items []uuid.UUID
 	for rows.Next() {
-		var id uuid.UUID
-		if err := rows.Scan(&id); err != nil {
+		var t_monthly_transactions_id uuid.UUID
+		if err := rows.Scan(&t_monthly_transactions_id); err != nil {
 			return nil, err
 		}
-		items = append(items, id)
+		items = append(items, t_monthly_transactions_id)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
