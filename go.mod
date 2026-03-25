@@ -3,8 +3,8 @@ module financialcontrol
 go 1.25.5
 
 require (
+	github.com/TB-Systems/financial-control-backend-commons v1.1.0
 	github.com/TB-Systems/go-commons v1.0.2
-	github.com/TB-Systems/financial-control-backend-commons v1.0.3
 	github.com/gin-gonic/gin v1.11.0
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.7.6

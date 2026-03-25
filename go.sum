@@ -1,7 +1,5 @@
-github.com/TB-Systems/financial-control-backend-commons v1.0.2 h1:G81wnYUs13OuSrgIzQFOvs3811jtMX7eWCcLiHUMD00=
-github.com/TB-Systems/financial-control-backend-commons v1.0.2/go.mod h1:bk2++S0zEDZuSHRA9815+vhkBA99R0PRBIQU/3aaQOE=
-github.com/TB-Systems/financial-control-backend-commons v1.0.3 h1:cJc2TUHJZF5cYaxc02YgEzRmXznsX7+6LowVRA4BKbw=
-github.com/TB-Systems/financial-control-backend-commons v1.0.3/go.mod h1:bk2++S0zEDZuSHRA9815+vhkBA99R0PRBIQU/3aaQOE=
+github.com/TB-Systems/financial-control-backend-commons v1.1.0 h1:uw/vUJhlfxyqQlVOcD4IgYNRmLdPih1CmNCoB7IbIDc=
+github.com/TB-Systems/financial-control-backend-commons v1.1.0/go.mod h1:bk2++S0zEDZuSHRA9815+vhkBA99R0PRBIQU/3aaQOE=
 github.com/TB-Systems/go-commons v1.0.2 h1:rWFPRnBrGNCGq/bIMJCnangB0qDT2al86fsxGEfBjr8=
 github.com/TB-Systems/go-commons v1.0.2/go.mod h1:ZGGe5q0ClsT0oNACOaDvre5aCb+IQFTe3QgYpYeec+g=
 github.com/bytedance/sonic v1.14.0 h1:/OfKt8HFw0kh2rj8N0F6C/qPGRESq0BbaNZgcNXXzQQ=
